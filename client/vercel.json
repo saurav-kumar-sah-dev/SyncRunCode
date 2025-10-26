@@ -1,8 +1,13 @@
+# Vercel Configuration for Monorepo Structure
+
+# This file should be placed in the client directory
+# OR configure Vercel to use client as root directory
+
 {
   "version": 2,
-  "buildCommand": "cd client && npm ci && npm run build",
-  "outputDirectory": "client/dist",
-  "installCommand": "cd client && npm ci",
+  "buildCommand": "npm ci && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm ci",
   "framework": "vite",
   "routes": [
     {
