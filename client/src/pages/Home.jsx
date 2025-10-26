@@ -236,7 +236,9 @@ const Home = () => {
               </p>
               <div className="flex space-x-4">
                 <a 
-                  href="#" 
+                  href="https://github.com/saurav-kumar-sah-dev" 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-400 hover:text-primary-400 transition-colors"
                   aria-label="GitHub"
                 >
@@ -245,16 +247,20 @@ const Home = () => {
                   </svg>
                 </a>
                 <a 
-                  href="#" 
+                  href="https://saurav-portfolio-dun.vercel.app/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-400 hover:text-primary-400 transition-colors"
-                  aria-label="Twitter"
+                  aria-label="Portfolio Website"
                 >
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                   </svg>
                 </a>
                 <a 
-                  href="#" 
+                  href="https://www.linkedin.com/in/sauravkumarsah-dev/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-400 hover:text-primary-400 transition-colors"
                   aria-label="LinkedIn"
                 >
@@ -367,7 +373,7 @@ const Home = () => {
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
                 <p className="text-gray-400 text-sm">
-                  © 2024 SyncRunCode. All rights reserved.
+                  © 2024 SyncRunCode by <a href="https://saurav-portfolio-dun.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-primary-400 hover:text-primary-300 transition-colors">Saurav Kumar Sah</a>. All rights reserved.
                 </p>
                 <div className="flex space-x-6 text-sm">
                   <a href="#" className="text-gray-400 hover:text-white transition-colors">
