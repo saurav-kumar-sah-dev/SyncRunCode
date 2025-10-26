@@ -47,6 +47,8 @@ const Compiler = () => {
   const [projectTitle, setProjectTitle] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [isUpdatingProject, setIsUpdatingProject] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [activeTab, setActiveTab] = useState('editor'); // 'editor', 'input', 'output'
   
   const editorRef = useRef(null);
   const outputRef = useRef(null);
@@ -399,17 +401,18 @@ console.log("Hello, World!");`
   }
 
   return (
-    <div className="h-screen bg-gray-950">
-      {/* Header */}
-      <div className="h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-4">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-xl font-semibold text-white">
+    <div className="h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
+      {/* Enhanced Header */}
+      <div className="h-16 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-b border-gray-700/50 flex items-center justify-between px-3 sm:px-4 shadow-lg">
+        <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">
+          <h1 className="text-lg sm:text-xl font-bold text-white truncate">
             {project ? project.title : 'Code Compiler'}
           </h1>
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className="px-3 py-1 bg-gray-800 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-2 sm:px-3 py-1 bg-gray-800/80 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-gray-700/80 transition-colors"
+            aria-label="Select programming language"
           >
             {languages.map((lang) => (
               <option key={lang.value} value={lang.value}>
@@ -419,214 +422,485 @@ console.log("Hello, World!");`
           </select>
         </div>
 
-        <div className="flex items-center space-x-2">
-          {project && (
+        {/* Mobile-First Action Buttons */}
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          {/* Mobile: Show only essential buttons, Desktop: Show all */}
+          <div className="hidden sm:flex items-center space-x-2">
+            {project && (
+              <button
+                onClick={handleOpenProjectSettings}
+                className="px-3 py-2 bg-gray-700/80 text-white rounded-lg hover:bg-gray-600 transition-all duration-200 hover:scale-105"
+                title="Project Settings"
+                aria-label="Open project settings"
+              >
+                <FiEdit3 className="w-4 h-4" />
+              </button>
+            )}
+            
             <button
-              onClick={handleOpenProjectSettings}
-              className="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
-              title="Project Settings"
+              onClick={handleFormat}
+              className="px-3 py-2 bg-gray-700/80 text-white rounded-lg hover:bg-gray-600 transition-all duration-200 hover:scale-105"
+              title="Format Code"
+              aria-label="Format code"
             >
-              <FiEdit3 className="w-4 h-4" />
+              <FiCode className="w-4 h-4" />
             </button>
-          )}
-          
-          <button
-            onClick={handleFormat}
-            className="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
-            title="Format Code"
-          >
-            <FiCode className="w-4 h-4" />
-          </button>
-          
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
-            title="Save Project"
-          >
-            {isSaving ? <LoadingSpinner size="sm" /> : <FiSave className="w-4 h-4" />}
-          </button>
-
-          {projectId && (
+            
             <button
-              onClick={() => {
-                setSaveTitle(`${projectTitle} (Copy)`);
-                setSaveDescription(projectDescription || '');
-                setShowSaveModal(true);
-              }}
-              className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-              title="Save As New Project"
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-3 py-2 bg-blue-600/90 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all duration-200 hover:scale-105"
+              title="Save Project"
+              aria-label="Save project"
             >
-              <FiCopy className="w-4 h-4" />
+              {isSaving ? <LoadingSpinner size="sm" /> : <FiSave className="w-4 h-4" />}
             </button>
-          )}
 
-          <button
-            onClick={handleDownload}
-            className="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
-            title="Download Code"
-          >
-            <FiDownload className="w-4 h-4" />
-          </button>
+            {projectId && (
+              <button
+                onClick={() => {
+                  setSaveTitle(`${projectTitle} (Copy)`);
+                  setSaveDescription(projectDescription || '');
+                  setShowSaveModal(true);
+                }}
+                className="px-3 py-2 bg-green-600/90 text-white rounded-lg hover:bg-green-700 transition-all duration-200 hover:scale-105"
+                title="Save As New Project"
+                aria-label="Save as new project"
+              >
+                <FiCopy className="w-4 h-4" />
+              </button>
+            )}
 
-          <label className="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors cursor-pointer">
-            <FiUpload className="w-4 h-4" />
-            <input
-              type="file"
-              accept=".js,.py,.java,.cpp,.c,.ts,.txt"
-              onChange={handleUpload}
-              className="hidden"
-            />
-          </label>
+            <button
+              onClick={handleDownload}
+              className="px-3 py-2 bg-gray-700/80 text-white rounded-lg hover:bg-gray-600 transition-all duration-200 hover:scale-105"
+              title="Download Code"
+              aria-label="Download code"
+            >
+              <FiDownload className="w-4 h-4" />
+            </button>
 
+            <label className="px-3 py-2 bg-gray-700/80 text-white rounded-lg hover:bg-gray-600 transition-all duration-200 hover:scale-105 cursor-pointer">
+              <FiUpload className="w-4 h-4" />
+              <input
+                type="file"
+                accept=".js,.py,.java,.cpp,.c,.ts,.txt"
+                onChange={handleUpload}
+                className="hidden"
+                aria-label="Upload file"
+              />
+            </label>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="sm:hidden relative">
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="p-2 bg-gray-700/80 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              aria-label="Open mobile menu"
+            >
+              <FiSettings className="w-4 h-4" />
+            </button>
+            
+            {/* Mobile Menu Dropdown */}
+            {showMobileMenu && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50">
+                <div className="py-2">
+                  {project && (
+                    <button
+                      onClick={() => {
+                        handleOpenProjectSettings();
+                        setShowMobileMenu(false);
+                      }}
+                      className="w-full px-4 py-2 text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors flex items-center"
+                    >
+                      <FiEdit3 className="w-4 h-4 mr-3" />
+                      Project Settings
+                    </button>
+                  )}
+                  
+                  <button
+                    onClick={() => {
+                      handleFormat();
+                      setShowMobileMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors flex items-center"
+                  >
+                    <FiCode className="w-4 h-4 mr-3" />
+                    Format Code
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      handleSave();
+                      setShowMobileMenu(false);
+                    }}
+                    disabled={isSaving}
+                    className="w-full px-4 py-2 text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors flex items-center disabled:opacity-50"
+                  >
+                    <FiSave className="w-4 h-4 mr-3" />
+                    Save Project
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      handleDownload();
+                      setShowMobileMenu(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors flex items-center"
+                  >
+                    <FiDownload className="w-4 h-4 mr-3" />
+                    Download
+                  </button>
+
+                  <label className="w-full px-4 py-2 text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors flex items-center cursor-pointer">
+                    <FiUpload className="w-4 h-4 mr-3" />
+                    Upload File
+                    <input
+                      type="file"
+                      accept=".js,.py,.java,.cpp,.c,.ts,.txt"
+                      onChange={handleUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Run Button - Always Visible */}
           <button
             onClick={handleRun}
             disabled={isRunning}
-            className={`px-4 py-1 text-white rounded transition-colors flex items-center space-x-2 ${
+            className={`px-4 py-2 text-white rounded-lg transition-all duration-200 hover:scale-105 flex items-center space-x-2 ${
               !isAuthenticated 
-                ? 'bg-gray-600 hover:bg-gray-700 border border-gray-500' 
-                : 'bg-green-600 hover:bg-green-700'
-            } disabled:opacity-50`}
+                ? 'bg-gray-600/90 hover:bg-gray-700 border border-gray-500' 
+                : 'bg-green-600/90 hover:bg-green-700'
+            } disabled:opacity-50 shadow-lg`}
             title={!isAuthenticated ? "Login required to run code" : "Run Code (Ctrl+Enter)"}
+            aria-label={!isAuthenticated ? "Login required to run code" : "Run code"}
           >
             {isRunning ? <LoadingSpinner size="sm" /> : <FiPlay className="w-4 h-4" />}
-            <span>{!isAuthenticated ? 'Login to Run' : 'Run'}</span>
+            <span className="hidden sm:inline text-sm font-medium">
+              {!isAuthenticated ? 'Login to Run' : 'Run'}
+            </span>
           </button>
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - Mobile Responsive */}
       <div className="h-[calc(100vh-4rem)]">
-        <PanelGroup direction="horizontal" className="h-full">
-          {/* Editor Panel */}
-          <Panel defaultSize={60} minSize={30} className="flex flex-col">
-            <div className="h-full">
-              <Editor
-                height="100%"
-                language={language}
-                value={code}
-                onChange={handleCodeChange}
-                onMount={handleEditorDidMount}
-                theme={theme === 'dark' ? 'vs-dark' : 'light'}
-                options={{
-                  fontSize: fontSize,
-                  tabSize: tabSize,
-                  minimap: { enabled: minimap },
-                  wordWrap: wordWrap ? 'on' : 'off',
-                  lineNumbers: lineNumbers ? 'on' : 'off',
-                  automaticLayout: true,
-                  scrollBeyondLastLine: false,
-                  smoothScrolling: true,
-                  cursorBlinking: 'blink',
-                  cursorSmoothCaretAnimation: true,
-                  renderWhitespace: 'selection',
-                  renderLineHighlight: 'line',
-                  selectOnLineNumbers: true,
-                  roundedSelection: false,
-                  readOnly: false,
-                  contextmenu: true,
-                  mouseWheelZoom: true,
-                  quickSuggestions: true,
-                  suggestOnTriggerCharacters: true,
-                  acceptSuggestionOnEnter: 'on',
-                  tabCompletion: 'on',
-                  wordBasedSuggestions: 'matchingDocuments'
-                }}
-              />
-            </div>
-          </Panel>
+        {/* Mobile Layout */}
+        <div className="sm:hidden h-full flex flex-col">
+          {/* Mobile Tab Navigation */}
+          <div className="flex bg-gray-800/50 border-b border-gray-700">
+            <button
+              onClick={() => setActiveTab('editor')}
+              className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                activeTab === 'editor'
+                  ? 'text-white bg-gray-700 border-b-2 border-blue-500'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <FiCode className="w-4 h-4 inline mr-2" />
+              Editor
+            </button>
+            <button
+              onClick={() => setActiveTab('input')}
+              className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                activeTab === 'input'
+                  ? 'text-white bg-gray-700 border-b-2 border-blue-500'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <FiFileText className="w-4 h-4 inline mr-2" />
+              Input
+            </button>
+            <button
+              onClick={() => setActiveTab('output')}
+              className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                activeTab === 'output'
+                  ? 'text-white bg-gray-700 border-b-2 border-blue-500'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <FiTerminal className="w-4 h-4 inline mr-2" />
+              Output
+            </button>
+          </div>
 
-          <PanelResizeHandle className="w-1 bg-gray-700 hover:bg-gray-600 transition-colors" />
-
-          {/* Output Panel */}
-          <Panel defaultSize={40} minSize={20} className="flex flex-col bg-gray-900">
-            {/* Input Section */}
-            <div className="border-b border-gray-700 p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-300 flex items-center">
-                  <FiFileText className="w-4 h-4 mr-2" />
-                  Input
-                </h3>
+          {/* Mobile Content */}
+          <div className="flex-1 overflow-hidden">
+            {activeTab === 'editor' && (
+              <div className="h-full">
+                <Editor
+                  height="100%"
+                  language={language}
+                  value={code}
+                  onChange={handleCodeChange}
+                  onMount={handleEditorDidMount}
+                  theme={theme === 'dark' ? 'vs-dark' : 'light'}
+                  options={{
+                    fontSize: fontSize,
+                    tabSize: tabSize,
+                    minimap: { enabled: false }, // Disable minimap on mobile
+                    wordWrap: 'on',
+                    lineNumbers: 'on',
+                    automaticLayout: true,
+                    scrollBeyondLastLine: false,
+                    smoothScrolling: true,
+                    cursorBlinking: 'blink',
+                    cursorSmoothCaretAnimation: true,
+                    renderWhitespace: 'selection',
+                    renderLineHighlight: 'line',
+                    selectOnLineNumbers: true,
+                    roundedSelection: false,
+                    readOnly: false,
+                    contextmenu: true,
+                    mouseWheelZoom: true,
+                    quickSuggestions: true,
+                    suggestOnTriggerCharacters: true,
+                    acceptSuggestionOnEnter: 'on',
+                    tabCompletion: 'on',
+                    wordBasedSuggestions: 'matchingDocuments'
+                  }}
+                />
               </div>
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Enter input for your program..."
-                className="w-full h-20 px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              />
-            </div>
+            )}
 
-            {/* Output Section */}
-            <div className="flex-1 flex flex-col">
-              <div className="border-b border-gray-700 p-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium text-gray-300 flex items-center">
-                    <FiTerminal className="w-4 h-4 mr-2" />
-                    Output
+            {activeTab === 'input' && (
+              <div className="h-full p-4 bg-gray-900">
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-gray-300 mb-2 flex items-center">
+                    <FiFileText className="w-4 h-4 mr-2" />
+                    Program Input
                   </h3>
-                  <div className="flex items-center space-x-2">
-                    {executionTime > 0 && (
-                      <span className="text-xs text-gray-400">
-                        {executionTime}ms
-                      </span>
+                  <textarea
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Enter input for your program..."
+                    className="w-full h-32 px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    aria-label="Program input"
+                  />
+                </div>
+                <div className="text-xs text-gray-500">
+                  Enter any input data your program needs (e.g., numbers, text, etc.)
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'output' && (
+              <div className="h-full bg-gray-900">
+                <div className="p-4 border-b border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-medium text-gray-300 flex items-center">
+                      <FiTerminal className="w-4 h-4 mr-2" />
+                      Program Output
+                    </h3>
+                    <div className="flex items-center space-x-2">
+                      {executionTime > 0 && (
+                        <span className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">
+                          {executionTime}ms
+                        </span>
+                      )}
+                      <button
+                        onClick={handleCopyOutput}
+                        className="p-2 text-gray-400 hover:text-white transition-colors bg-gray-800 rounded-lg"
+                        title="Copy Output"
+                        aria-label="Copy output"
+                      >
+                        <FiCopy className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={handleClearOutput}
+                        className="p-2 text-gray-400 hover:text-white transition-colors bg-gray-800 rounded-lg"
+                        title="Clear Output"
+                        aria-label="Clear output"
+                      >
+                        <FiRefreshCw className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="h-[calc(100%-4rem)] p-4 overflow-auto">
+                  <div
+                    ref={outputRef}
+                    className="h-full font-mono text-sm whitespace-pre-wrap"
+                  >
+                    {!isAuthenticated ? (
+                      <div className="text-center text-gray-400 py-8">
+                        <FiTerminal className="w-8 h-8 mx-auto mb-4 opacity-50" />
+                        <p className="text-sm mb-4">Login to run code and see results</p>
+                        <button
+                          onClick={() => window.location.href = '/login'}
+                          className="px-4 py-2 text-sm text-blue-400 hover:text-blue-300 underline bg-gray-800 rounded-lg"
+                        >
+                          Sign in to get started
+                        </button>
+                      </div>
+                    ) : isRunning ? (
+                      <div className="flex items-center justify-center space-x-2 text-blue-400 py-8">
+                        <LoadingSpinner size="sm" />
+                        <span>Running your code...</span>
+                      </div>
+                    ) : error ? (
+                      <div className="text-red-400 bg-red-900/20 p-4 rounded-lg border border-red-500/30">
+                        <div className="font-semibold mb-2">Error:</div>
+                        <div>{error}</div>
+                      </div>
+                    ) : output ? (
+                      <div className="text-green-400 bg-green-900/20 p-4 rounded-lg border border-green-500/30">
+                        <div className="font-semibold mb-2">Output:</div>
+                        <div>{output}</div>
+                      </div>
+                    ) : (
+                      <div className="text-center text-gray-500 py-8">
+                        <FiTerminal className="w-8 h-8 mx-auto mb-4 opacity-50" />
+                        <p className="text-sm">Click "Run" to execute your code</p>
+                        <p className="text-xs text-gray-600 mt-2">Results will appear here</p>
+                      </div>
                     )}
-                    <button
-                      onClick={handleCopyOutput}
-                      className="p-1 text-gray-400 hover:text-white transition-colors"
-                      title="Copy Output"
-                    >
-                      <FiCopy className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={handleClearOutput}
-                      className="p-1 text-gray-400 hover:text-white transition-colors"
-                      title="Clear Output"
-                    >
-                      <FiRefreshCw className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
               </div>
+            )}
+          </div>
+        </div>
 
-              <div className="flex-1 p-4 overflow-auto">
-                <div
-                  ref={outputRef}
-                  className="h-full font-mono text-sm whitespace-pre-wrap"
-                >
-                  {!isAuthenticated ? (
-                    <div className="text-center text-gray-400 py-8">
-                      <FiTerminal className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">Login to run code and see results</p>
+        {/* Desktop Layout */}
+        <div className="hidden sm:block h-full">
+          <PanelGroup direction="horizontal" className="h-full">
+            {/* Editor Panel */}
+            <Panel defaultSize={60} minSize={30} className="flex flex-col">
+              <div className="h-full">
+                <Editor
+                  height="100%"
+                  language={language}
+                  value={code}
+                  onChange={handleCodeChange}
+                  onMount={handleEditorDidMount}
+                  theme={theme === 'dark' ? 'vs-dark' : 'light'}
+                  options={{
+                    fontSize: fontSize,
+                    tabSize: tabSize,
+                    minimap: { enabled: minimap },
+                    wordWrap: wordWrap ? 'on' : 'off',
+                    lineNumbers: lineNumbers ? 'on' : 'off',
+                    automaticLayout: true,
+                    scrollBeyondLastLine: false,
+                    smoothScrolling: true,
+                    cursorBlinking: 'blink',
+                    cursorSmoothCaretAnimation: true,
+                    renderWhitespace: 'selection',
+                    renderLineHighlight: 'line',
+                    selectOnLineNumbers: true,
+                    roundedSelection: false,
+                    readOnly: false,
+                    contextmenu: true,
+                    mouseWheelZoom: true,
+                    quickSuggestions: true,
+                    suggestOnTriggerCharacters: true,
+                    acceptSuggestionOnEnter: 'on',
+                    tabCompletion: 'on',
+                    wordBasedSuggestions: 'matchingDocuments'
+                  }}
+                />
+              </div>
+            </Panel>
+
+            <PanelResizeHandle className="w-1 bg-gray-700 hover:bg-gray-600 transition-colors" />
+
+            {/* Output Panel */}
+            <Panel defaultSize={40} minSize={20} className="flex flex-col bg-gray-900">
+              {/* Input Section */}
+              <div className="border-b border-gray-700 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-medium text-gray-300 flex items-center">
+                    <FiFileText className="w-4 h-4 mr-2" />
+                    Input
+                  </h3>
+                </div>
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Enter input for your program..."
+                  className="w-full h-20 px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                />
+              </div>
+
+              {/* Output Section */}
+              <div className="flex-1 flex flex-col">
+                <div className="border-b border-gray-700 p-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-medium text-gray-300 flex items-center">
+                      <FiTerminal className="w-4 h-4 mr-2" />
+                      Output
+                    </h3>
+                    <div className="flex items-center space-x-2">
+                      {executionTime > 0 && (
+                        <span className="text-xs text-gray-400">
+                          {executionTime}ms
+                        </span>
+                      )}
                       <button
-                        onClick={() => window.location.href = '/login'}
-                        className="mt-2 text-xs text-blue-400 hover:text-blue-300 underline"
+                        onClick={handleCopyOutput}
+                        className="p-1 text-gray-400 hover:text-white transition-colors"
+                        title="Copy Output"
                       >
-                        Sign in to get started
+                        <FiCopy className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={handleClearOutput}
+                        className="p-1 text-gray-400 hover:text-white transition-colors"
+                        title="Clear Output"
+                      >
+                        <FiRefreshCw className="w-4 h-4" />
                       </button>
                     </div>
-                  ) : isRunning ? (
-                    <div className="flex items-center space-x-2 text-blue-400">
-                      <LoadingSpinner size="sm" />
-                      <span>Running...</span>
-                    </div>
-                  ) : error ? (
-                    <div className="text-red-400">
-                      {error}
-                    </div>
-                  ) : output ? (
-                    <div className="text-green-400">
-                      {output}
-                    </div>
-                  ) : (
-                    <div className="text-gray-500">
-                      Click "Run" to execute your code
-                    </div>
-                  )}
+                  </div>
+                </div>
+
+                <div className="flex-1 p-4 overflow-auto">
+                  <div
+                    ref={outputRef}
+                    className="h-full font-mono text-sm whitespace-pre-wrap"
+                  >
+                    {!isAuthenticated ? (
+                      <div className="text-center text-gray-400 py-8">
+                        <FiTerminal className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">Login to run code and see results</p>
+                        <button
+                          onClick={() => window.location.href = '/login'}
+                          className="mt-2 text-xs text-blue-400 hover:text-blue-300 underline"
+                        >
+                          Sign in to get started
+                        </button>
+                      </div>
+                    ) : isRunning ? (
+                      <div className="flex items-center space-x-2 text-blue-400">
+                        <LoadingSpinner size="sm" />
+                        <span>Running...</span>
+                      </div>
+                    ) : error ? (
+                      <div className="text-red-400">
+                        {error}
+                      </div>
+                    ) : output ? (
+                      <div className="text-green-400">
+                        {output}
+                      </div>
+                    ) : (
+                      <div className="text-gray-500">
+                        Click "Run" to execute your code
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </Panel>
-        </PanelGroup>
+            </Panel>
+          </PanelGroup>
+        </div>
       </div>
 
       {/* Project Settings Modal */}
