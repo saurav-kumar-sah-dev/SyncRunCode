@@ -1,9 +1,9 @@
 services:
   - type: web
     name: syncruncode-backend
-    env: node
+    env: docker
     plan: starter
-    buildCommand: npm install
+    dockerfilePath: ./Dockerfile
     startCommand: npm start
     envVars:
       - key: NODE_ENV
