@@ -2,6 +2,13 @@
 
 SyncRunCode is a modern, full-featured real-time collaborative code compiler and IDE built with React, Vite, Tailwind CSS, Node.js, and MongoDB. Features real-time collaboration, multi-language support, and seamless deployment to Render (backend) and Vercel (frontend).
 
+## 🌐 Live Demo
+
+🚀 **Try SyncRunCode now!**
+
+- **Frontend**: [https://sync-run-code.vercel.app/](https://sync-run-code.vercel.app/)
+- **Backend API**: [https://syncruncode.onrender.com](https://syncruncode.onrender.com)
+
 ## ✨ Features
 
 ### 🚀 Core Functionality
