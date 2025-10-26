@@ -319,7 +319,16 @@ For detailed security guidelines, see [SECURITY.md](SECURITY.md).
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### License Summary:
+- ✅ **Commercial use** - Use in commercial projects
+- ✅ **Modification** - Modify and adapt the code
+- ✅ **Distribution** - Share and distribute copies
+- ✅ **Private use** - Use in private projects
+- ✅ **Patent use** - Use patented components
+
+**Attribution required**: Include the original copyright notice and license text in any substantial portions of the software.
 
 ## 🔧 Development Features
 
