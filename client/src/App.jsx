@@ -14,6 +14,9 @@ import AdminDashboard from './pages/AdminDashboard';
 import UserManagement from './pages/UserManagement';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import CookiePolicy from './pages/CookiePolicy';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import PublicRoute from './components/Auth/PublicRoute';
 import AdminRoute from './components/Auth/AdminRoute';
@@ -94,6 +97,9 @@ function App() {
                       </PublicRoute>
                     } 
                   />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/cookies" element={<CookiePolicy />} />
                 </Routes>
               </main>
             </div>

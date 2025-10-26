@@ -295,8 +295,8 @@ const Register = () => {
                   }`}
                 >
                   I agree to the{' '}
-                  <a 
-                    href="#" 
+                  <Link 
+                    to="/terms" 
                     className={`font-medium transition-colors duration-200 ${
                       theme === 'dark' 
                         ? 'text-primary-400 hover:text-primary-300' 
@@ -304,10 +304,10 @@ const Register = () => {
                     }`}
                   >
                     Terms of Service
-                  </a>{' '}
+                  </Link>{' '}
                   and{' '}
-                  <a 
-                    href="#" 
+                  <Link 
+                    to="/privacy" 
                     className={`font-medium transition-colors duration-200 ${
                       theme === 'dark' 
                         ? 'text-primary-400 hover:text-primary-300' 
@@ -315,7 +315,7 @@ const Register = () => {
                     }`}
                   >
                     Privacy Policy
-                  </a>
+                  </Link>
                 </label>
               </div>
 
