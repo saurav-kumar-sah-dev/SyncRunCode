@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "create-superadmin": "node scripts/createSuperAdmin.js"
+    "create-superadmin": "node scripts/createSuperAdmin.js",
+    "build": "apt-get update && apt-get install -y openjdk-11-jdk && npm install && npm install -g typescript"
   },
   "dependencies": {
     "express": "^4.18.2",

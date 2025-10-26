@@ -3,12 +3,7 @@ services:
     name: syncruncode-backend
     env: node
     plan: starter
-    buildCommand: |
-      apt-get update && apt-get install -y openjdk-11-jdk
-      export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-      export PATH=$PATH:$JAVA_HOME/bin
-      npm install
-      npm install -g typescript
+    buildCommand: npm run build
     startCommand: chmod +x start.sh && ./start.sh
     envVars:
       - key: NODE_ENV
