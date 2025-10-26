@@ -26,7 +26,7 @@ RUN npm install && npm install -g typescript
 COPY . .
 
 # Expose port
-EXPOSE 10000
+EXPOSE 5000
 
 # Start the application
 CMD ["npm", "start"]
