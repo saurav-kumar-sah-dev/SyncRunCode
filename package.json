@@ -1,0 +1,14 @@
+{
+  "name": "syncruncode",
+  "version": "1.0.0",
+  "description": "SyncRunCode - Online Code Compiler",
+  "private": true,
+  "scripts": {
+    "build": "cd client && npm run build",
+    "install": "cd client && npm install",
+    "dev": "cd client && npm run dev"
+  },
+  "workspaces": [
+    "client"
+  ]
+}
