@@ -79,8 +79,8 @@ SyncRunCode is a modern, full-featured real-time collaborative code compiler and
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd syncruncode
+   git clone https://github.com/saurav-kumar-sah-dev/SyncRunCode.git
+   cd SyncRunCode
    ```
 
 2. **Install dependencies**
@@ -390,12 +390,23 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Consult [DEPLOYMENT.md](DEPLOYMENT.md) for deployment guidance
 - Verify all environment variables are correctly configured
 
+## 📊 Repository Statistics
+
+- **Languages**: JavaScript (96.9%), CSS (2.4%), Other (0.7%)
+- **Topics**: react, nodejs, javascript, python, java, jwt, express, admin, mongodb, compiler, cpp, websocket, collaboration, auth, socketio, tailwindcss, vite
+- **License**: MIT License
+- **Stars**: ⭐ Star this repository if you find it helpful!
+
+## 🔗 Links
+
+- **GitHub Repository**: [https://github.com/saurav-kumar-sah-dev/SyncRunCode](https://github.com/saurav-kumar-sah-dev/SyncRunCode)
+- **Live Demo**: [https://sync-run-code.vercel.app](https://sync-run-code.vercel.app)
+- **Backend API**: [https://syncruncode.onrender.com](https://syncruncode.onrender.com)
+
 ---
 
 **Happy Coding! 🎉**
 
 *SyncRunCode - Where Code Syncs and Runs*
 
-*Built with ❤️ for developers worldwide*#   T r i g g e r   V e r c e l   R e d e p l o y   -   1 0 / 2 6 / 2 0 2 5   1 8 : 0 9 : 2 7  
- #   F o r c e   V e r c e l   C o m p l e t e   R e d e p l o y   -   2 0 2 5 - 1 0 - 2 6   1 8 : 2 2 : 2 2  
- 
+*Built with ❤️ for developers worldwide*
