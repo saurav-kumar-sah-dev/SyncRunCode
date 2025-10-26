@@ -284,33 +284,33 @@ const About = () => {
                   </p>
                   
                   {/* Enhanced Social Links Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 max-w-md mx-auto">
                     <a 
                       href="https://github.com/saurav-kumar-sah-dev"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center space-x-2 bg-gray-800/60 hover:bg-gray-700/60 text-gray-300 hover:text-white px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 group border border-gray-600/50 hover:border-gray-500/50"
+                      className="flex items-center justify-center space-x-2 bg-gray-800/60 hover:bg-gray-700/60 text-gray-300 hover:text-white px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 group border border-gray-600/50 hover:border-gray-500/50 w-full sm:w-auto"
                     >
                       <FiGithub className="text-lg group-hover:scale-110 transition-transform" />
-                      <span className="text-xs sm:text-sm font-medium">GitHub</span>
+                      <span className="text-sm font-medium">GitHub</span>
                     </a>
                     <a 
                       href="https://www.linkedin.com/in/sauravkumarsah-dev/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center space-x-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 hover:text-blue-200 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 group border border-blue-500/30 hover:border-blue-400/50"
+                      className="flex items-center justify-center space-x-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 hover:text-blue-200 px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 group border border-blue-500/30 hover:border-blue-400/50 w-full sm:w-auto"
                     >
                       <FiLinkedin className="text-lg group-hover:scale-110 transition-transform" />
-                      <span className="text-xs sm:text-sm font-medium">LinkedIn</span>
+                      <span className="text-sm font-medium">LinkedIn</span>
                     </a>
                     <a 
                       href="https://saurav-portfolio-dun.vercel.app/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center space-x-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 group border border-purple-500/30 hover:border-purple-400/50"
+                      className="flex items-center justify-center space-x-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 hover:text-purple-200 px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 group border border-purple-500/30 hover:border-purple-400/50 w-full sm:w-auto"
                     >
                       <FiExternalLink className="text-lg group-hover:scale-110 transition-transform" />
-                      <span className="text-xs sm:text-sm font-medium">Portfolio</span>
+                      <span className="text-sm font-medium">Portfolio</span>
                     </a>
                   </div>
                 </div>
@@ -320,35 +320,35 @@ const About = () => {
         </div>
 
         {/* Enhanced Contact CTA */}
-        <div className="mt-20 sm:mt-24 lg:mt-28 text-center">
-          <div className={`bg-gradient-to-br from-primary-500/15 via-purple-500/15 to-primary-500/15 backdrop-blur-sm border border-primary-500/30 rounded-3xl p-10 sm:p-12 lg:p-16 hover:from-primary-500/25 hover:via-purple-500/25 hover:to-primary-500/25 transition-all duration-700 hover:shadow-2xl hover:shadow-primary-500/30 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{transitionDelay: '1000ms'}}>
-            <div className="max-w-5xl mx-auto">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 sm:mb-8">
+        <div className="mt-16 sm:mt-20 lg:mt-24 text-center">
+          <div className={`bg-gradient-to-br from-primary-500/15 via-purple-500/15 to-primary-500/15 backdrop-blur-sm border border-primary-500/30 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 hover:from-primary-500/25 hover:via-purple-500/25 hover:to-primary-500/25 transition-all duration-700 hover:shadow-2xl hover:shadow-primary-500/30 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{transitionDelay: '1000ms'}}>
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6">
                 Let's Work Together
               </h2>
-              <p className="text-gray-300 text-lg sm:text-xl lg:text-2xl mb-10 sm:mb-12 leading-relaxed font-light">
+              <p className="text-gray-300 text-base sm:text-lg lg:text-xl mb-6 sm:mb-8 leading-relaxed font-light px-4">
                 Have a project in mind? I'd love to hear about it. 
                 Let's discuss how we can bring your ideas to life.
               </p>
               
               {/* Enhanced Portfolio Contact */}
-              <div className="flex justify-center">
+              <div className="flex justify-center px-4">
                 <a 
                   href="https://saurav-portfolio-dun.vercel.app/contact"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group bg-gradient-to-r from-primary-500/25 to-purple-500/25 hover:from-primary-500/35 hover:to-purple-500/35 border border-primary-500/40 hover:border-primary-400/60 rounded-3xl p-10 sm:p-12 transition-all duration-700 hover:scale-105 hover:shadow-2xl hover:shadow-primary-500/30 max-w-lg w-full"
+                  className="group bg-gradient-to-r from-primary-500/25 to-purple-500/25 hover:from-primary-500/35 hover:to-purple-500/35 border border-primary-500/40 hover:border-primary-400/60 rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-700 hover:scale-105 hover:shadow-2xl hover:shadow-primary-500/30 w-full max-w-sm sm:max-w-md"
                 >
-                  <div className="flex items-center justify-center mb-6">
-                    <div className="w-20 h-20 bg-gradient-to-r from-primary-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl">
-                      <FiMail className="text-white text-3xl" />
+                  <div className="flex items-center justify-center mb-4 sm:mb-6">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-primary-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl">
+                      <FiMail className="text-white text-2xl sm:text-3xl" />
                     </div>
                   </div>
-                  <h3 className="text-white font-bold text-2xl sm:text-3xl mb-4 text-center">Portfolio Contact</h3>
-                  <p className="text-gray-300 text-base sm:text-lg mb-6 text-center leading-relaxed">Professional contact form for project inquiries</p>
-                  <div className="flex items-center justify-center text-primary-400 group-hover:text-primary-300 text-lg font-semibold transition-colors">
+                  <h3 className="text-white font-bold text-xl sm:text-2xl mb-3 sm:mb-4 text-center">Portfolio Contact</h3>
+                  <p className="text-gray-300 text-sm sm:text-base mb-4 sm:mb-6 text-center leading-relaxed">Professional contact form for project inquiries</p>
+                  <div className="flex items-center justify-center text-primary-400 group-hover:text-primary-300 text-base sm:text-lg font-semibold transition-colors">
                     <span>Visit Contact Form</span>
-                    <FiExternalLink className="ml-3 group-hover:translate-x-1 transition-transform" />
+                    <FiExternalLink className="ml-2 sm:ml-3 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </a>
               </div>
