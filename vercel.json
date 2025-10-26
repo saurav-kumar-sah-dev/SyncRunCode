@@ -1,15 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "builds": [
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
+  "installCommand": "cd client && npm install",
   "routes": [
     {
       "src": "/(.*)",
@@ -19,10 +12,5 @@
   "env": {
     "VITE_API_URL": "https://syncruncode.onrender.com",
     "VITE_SOCKET_URL": "https://syncruncode.onrender.com"
-  },
-  "functions": {
-    "client/dist/**": {
-      "maxDuration": 30
-    }
   }
 }
