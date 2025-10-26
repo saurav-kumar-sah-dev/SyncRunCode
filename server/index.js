@@ -27,12 +27,19 @@ app.use(cors({
     const allowedOrigins = [
       process.env.CORS_ORIGIN || "http://localhost:3000",
       "https://sync-run-code.vercel.app",
-      "https://sync-run-code.vercel.app/"
+      "https://sync-run-code.vercel.app/",
+      "https://syncruncode.vercel.app",
+      "https://syncruncode.vercel.app/",
+      "https://*.vercel.app"
     ];
     
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin) || origin.includes('.vercel.app')) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
