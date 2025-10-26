@@ -1,8 +1,3 @@
-# Vercel Configuration for Monorepo Structure
-
-# This file should be placed in the client directory
-# OR configure Vercel to use client as root directory
-
 {
   "version": 2,
   "buildCommand": "npm ci && npm run build",
