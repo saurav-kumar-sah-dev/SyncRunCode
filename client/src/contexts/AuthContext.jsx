@@ -58,6 +58,9 @@ export const AuthProvider = ({ children }) => {
 
   // Set up axios interceptor for token
   useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.log('Setting axios baseURL to:', config.API_URL);
+    }
     axios.defaults.baseURL = config.API_URL;
     if (state.token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
