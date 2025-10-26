@@ -7,7 +7,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "create-superadmin": "node scripts/createSuperAdmin.js",
-    "build": "npm install && npm install -g typescript"
+    "build": "npm install",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

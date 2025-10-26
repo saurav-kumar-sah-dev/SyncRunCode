@@ -10,7 +10,7 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://syncruncode.onrender.com",
-    "VITE_SOCKET_URL": "https://syncruncode.onrender.com"
+    "VITE_API_URL": "https://syncruncode-backend.onrender.com",
+    "VITE_SOCKET_URL": "https://syncruncode-backend.onrender.com"
   }
 }
