@@ -642,26 +642,14 @@ class CodeExecutor {
     await fs.writeFile(filePath, code);
     
     return new Promise((resolve) => {
-      // Try multiple approaches to run TypeScript compiler
+      // Use npx as the primary method - it's more reliable across platforms
+      // Set cwd to server directory to ensure npx can find the local TypeScript installation
       const serverDir = path.join(__dirname, '..');
-      const tscPath = path.join(serverDir, 'node_modules', '.bin', 'tsc');
-      
-      // First try: Use the local tsc binary directly
-      let compileProcess;
-      try {
-        compileProcess = spawn(tscPath, [filePath, '--outDir', tempDir, '--target', 'ES2020', '--module', 'commonjs', '--skipLibCheck', '--noEmitOnError'], {
-          cwd: tempDir,
-          stdio: ['pipe', 'pipe', 'pipe'],
-          shell: true
-        });
-      } catch (error) {
-        // Fallback: Use npx
-        compileProcess = spawn('npx', ['tsc', filePath, '--outDir', tempDir, '--target', 'ES2020', '--module', 'commonjs', '--skipLibCheck', '--noEmitOnError'], {
-          cwd: tempDir,
-          stdio: ['pipe', 'pipe', 'pipe'],
-          shell: true
-        });
-      }
+      const compileProcess = spawn('npx', ['tsc', filePath, '--outDir', tempDir, '--target', 'ES2020', '--module', 'commonjs', '--skipLibCheck', '--noEmitOnError'], {
+        cwd: serverDir,
+        stdio: ['pipe', 'pipe', 'pipe'],
+        shell: true
+      });
 
       let compileError = '';
 
