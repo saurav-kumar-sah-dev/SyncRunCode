@@ -17,6 +17,18 @@
   ],
   "env": {
     "VITE_API_URL": "https://syncruncode.onrender.com",
-    "VITE_SOCKET_URL": "https://syncruncode.onrender.com"
+    "VITE_SOCKET_URL": "https://syncruncode.onrender.com",
+    "VITE_APP_NAME": "SyncRunCode",
+    "VITE_APP_VERSION": "1.0.0",
+    "VITE_APP_DESCRIPTION": "Real-time collaborative code compiler",
+    "VITE_DEFAULT_THEME": "dark",
+    "VITE_ENABLE_DARK_MODE": "true",
+    "VITE_EDITOR_THEME": "vs-dark",
+    "VITE_EDITOR_FONT_SIZE": "14",
+    "VITE_EDITOR_TAB_SIZE": "2",
+    "VITE_ENABLE_ANALYTICS": "false",
+    "VITE_ENABLE_DEBUG": "false",
+    "VITE_ENABLE_HTTPS": "true",
+    "VITE_ENABLE_CSP": "true"
   }
 }

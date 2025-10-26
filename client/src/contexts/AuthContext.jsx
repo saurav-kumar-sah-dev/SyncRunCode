@@ -98,6 +98,12 @@ export const AuthProvider = ({ children }) => {
   const login = async (login, password) => {
     try {
       dispatch({ type: 'AUTH_START' });
+      
+      // Debug logging
+      console.log('Attempting login with:', { login, password: '***' });
+      console.log('API Base URL:', config.API_URL);
+      console.log('Full URL:', `${config.API_URL}/api/auth/login`);
+      
       const response = await axios.post('/api/auth/login', {
         login,
         password
@@ -114,6 +120,11 @@ export const AuthProvider = ({ children }) => {
       toast.success('Login successful!');
       return { success: true };
     } catch (error) {
+      console.error('Login error:', error);
+      console.error('Error response:', error.response);
+      console.error('Error status:', error.response?.status);
+      console.error('Error data:', error.response?.data);
+      
       const message = error.response?.data?.message || 'Login failed';
       toast.error(message);
       dispatch({ type: 'AUTH_FAILURE' });
