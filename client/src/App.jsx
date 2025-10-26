@@ -17,6 +17,7 @@ import Register from './pages/Auth/Register';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import CookiePolicy from './pages/CookiePolicy';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import PublicRoute from './components/Auth/PublicRoute';
 import AdminRoute from './components/Auth/AdminRoute';
@@ -100,6 +101,8 @@ function App() {
                   <Route path="/terms" element={<TermsOfService />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/cookies" element={<CookiePolicy />} />
+                  {/* 404 Route - Must be last */}
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
             </div>
