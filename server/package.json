@@ -4,10 +4,10 @@
   "description": "SyncRunCode Backend - Node.js server for code compilation and execution",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "chmod +x start.sh && ./start.sh",
     "dev": "nodemon index.js",
     "create-superadmin": "node scripts/createSuperAdmin.js",
-    "build": "apt-get update && apt-get install -y openjdk-11-jdk && npm install && npm install -g typescript"
+    "build": "chmod +x install-compilers.sh && ./install-compilers.sh && npm install"
   },
   "dependencies": {
     "express": "^4.18.2",

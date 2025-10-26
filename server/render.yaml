@@ -3,8 +3,8 @@ services:
     name: syncruncode-backend
     env: node
     plan: starter
-    buildCommand: npm install
-    startCommand: chmod +x start.sh && ./start.sh
+    buildCommand: npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
