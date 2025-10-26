@@ -95,11 +95,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = async (email, password) => {
+  const login = async (login, password) => {
     try {
       dispatch({ type: 'AUTH_START' });
       const response = await axios.post('/api/auth/login', {
-        email,
+        login,
         password
       });
 
@@ -121,11 +121,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (username, email, password) => {
+  const register = async (email, password) => {
     try {
       dispatch({ type: 'AUTH_START' });
       const response = await axios.post('/api/auth/register', {
-        username,
         email,
         password
       });
@@ -170,12 +169,67 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const uploadProfileImage = async (imageFile) => {
+    try {
+      const formData = new FormData();
+      formData.append('profileImage', imageFile);
+
+      const response = await axios.post('/api/auth/upload-profile-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      dispatch({
+        type: 'UPDATE_USER',
+        payload: response.data.data.user
+      });
+      toast.success('Profile image uploaded successfully');
+      return { success: true, imageUrl: response.data.data.imageUrl };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Image upload failed';
+      toast.error(message);
+      return { success: false, message };
+    }
+  };
+
+  const updatePassword = async (passwordData) => {
+    try {
+      await axios.put('/api/auth/update-password', passwordData);
+      toast.success('Password updated successfully');
+      return { success: true };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Password update failed';
+      toast.error(message);
+      return { success: false, message };
+    }
+  };
+
+  const changeUsername = async (username) => {
+    try {
+      const response = await axios.put('/api/auth/change-username', { username });
+      dispatch({
+        type: 'UPDATE_USER',
+        payload: response.data.data.user
+      });
+      toast.success('Username changed successfully');
+      return { success: true };
+    } catch (error) {
+      const message = error.response?.data?.message || 'Username change failed';
+      toast.error(message);
+      return { success: false, message };
+    }
+  };
+
   const value = {
     ...state,
     login,
     register,
     logout,
     updateProfile,
+    uploadProfileImage,
+    updatePassword,
+    changeUsername,
     loadUser
   };
 

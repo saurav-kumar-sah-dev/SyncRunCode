@@ -21,7 +21,57 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: [6, 'Password must be at least 6 characters long']
+    minlength: [8, 'Password must be at least 8 characters long'],
+    validate: {
+      validator: function(v) {
+        // Only validate password strength if it's a new password (not hashed)
+        // Hashed passwords start with $2a$ or $2b$ (bcrypt)
+        if (v.startsWith('$2a$') || v.startsWith('$2b$')) {
+          return true; // Skip validation for existing hashed passwords
+        }
+        // Strong password: at least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(v);
+      },
+      message: 'Password must contain at least 8 characters with uppercase, lowercase, number, and special character'
+    }
+  },
+  name: {
+    firstName: {
+      type: String,
+      trim: true,
+      maxlength: [50, 'First name cannot exceed 50 characters']
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      maxlength: [50, 'Last name cannot exceed 50 characters']
+    }
+  },
+  dateOfBirth: {
+    type: Date,
+    validate: {
+      validator: function(v) {
+        // Must be at least 13 years old
+        const today = new Date();
+        const age = today.getFullYear() - v.getFullYear();
+        const monthDiff = today.getMonth() - v.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < v.getDate())) {
+          return age - 1 >= 13;
+        }
+        return age >= 13;
+      },
+      message: 'You must be at least 13 years old to register'
+    }
+  },
+  profileImage: {
+    publicId: {
+      type: String,
+      default: null
+    },
+    url: {
+      type: String,
+      default: null
+    }
   },
   avatar: {
     type: String,

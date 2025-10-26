@@ -7,7 +7,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
+    login: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -39,10 +39,8 @@ const Login = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+    if (!formData.login) {
+      newErrors.login = 'Email or username is required';
     }
 
     if (!formData.password) {
@@ -59,7 +57,7 @@ const Login = () => {
     if (!validateForm()) return;
 
     setLoading(true);
-    const result = await login(formData.email, formData.password);
+    const result = await login(formData.login, formData.password);
     setLoading(false);
 
     if (result.success) {
@@ -128,15 +126,15 @@ const Login = () => {
         }`}>
           <div className="p-6 sm:p-8">
             <form className="space-y-6" onSubmit={handleSubmit}>
-              {/* Email Field */}
+              {/* Login Field (Email or Username) */}
               <div className="space-y-2">
                 <label 
-                  htmlFor="email" 
+                  htmlFor="login" 
                   className={`block text-sm font-semibold ${
                     theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                   }`}
                 >
-                  Email Address
+                  Email or Username
                 </label>
                 <div className="relative group">
                   <div className={`absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-200 ${
@@ -145,23 +143,23 @@ const Login = () => {
                     <FiMail className="h-5 w-5" />
                   </div>
                   <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
+                    id="login"
+                    name="login"
+                    type="text"
+                    autoComplete="username"
                     required
-                    value={formData.email}
+                    value={formData.login}
                     onChange={handleChange}
                     className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                       theme === 'dark' 
-                        ? `bg-gray-800/50 border-gray-600 text-white placeholder-gray-400 focus:ring-primary-500 focus:border-primary-500 ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`
-                        : `bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-primary-500 focus:border-primary-500 ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`
+                        ? `bg-gray-800/50 border-gray-600 text-white placeholder-gray-400 focus:ring-primary-500 focus:border-primary-500 ${errors.login ? 'border-red-500 focus:ring-red-500' : ''}`
+                        : `bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-primary-500 focus:border-primary-500 ${errors.login ? 'border-red-500 focus:ring-red-500' : ''}`
                     }`}
-                    placeholder="Enter your email"
+                    placeholder="Enter your email or username"
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-sm text-red-500 animate-slide-up">{errors.email}</p>
+                {errors.login && (
+                  <p className="text-sm text-red-500 animate-slide-up">{errors.login}</p>
                 )}
               </div>
 

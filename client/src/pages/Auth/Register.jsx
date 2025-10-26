@@ -7,7 +7,6 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -39,14 +38,6 @@ const Register = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.username) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
-    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
-      newErrors.username = 'Username can only contain letters, numbers, and underscores';
-    }
-
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -55,8 +46,10 @@ const Register = () => {
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(formData.password)) {
+      newErrors.password = 'Password must contain uppercase, lowercase, number, and special character';
     }
 
     if (!formData.confirmPassword) {
@@ -75,7 +68,7 @@ const Register = () => {
     if (!validateForm()) return;
 
     setLoading(true);
-    const result = await register(formData.username, formData.email, formData.password);
+    const result = await register(formData.email, formData.password);
     setLoading(false);
 
     if (result.success) {
@@ -144,43 +137,6 @@ const Register = () => {
         }`}>
           <div className="p-6 sm:p-8">
             <form className="space-y-6" onSubmit={handleSubmit}>
-              {/* Username Field */}
-              <div className="space-y-2">
-                <label 
-                  htmlFor="username" 
-                  className={`block text-sm font-semibold ${
-                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                  }`}
-                >
-                  Username
-                </label>
-                <div className="relative group">
-                  <div className={`absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-200 ${
-                    theme === 'dark' ? 'text-gray-500 group-focus-within:text-primary-400' : 'text-gray-400 group-focus-within:text-primary-500'
-                  }`}>
-                    <FiUser className="h-5 w-5" />
-                  </div>
-                  <input
-                    id="username"
-                    name="username"
-                    type="text"
-                    autoComplete="username"
-                    required
-                    value={formData.username}
-                    onChange={handleChange}
-                    className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                      theme === 'dark' 
-                        ? `bg-gray-800/50 border-gray-600 text-white placeholder-gray-400 focus:ring-primary-500 focus:border-primary-500 ${errors.username ? 'border-red-500 focus:ring-red-500' : ''}`
-                        : `bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-primary-500 focus:border-primary-500 ${errors.username ? 'border-red-500 focus:ring-red-500' : ''}`
-                    }`}
-                    placeholder="Choose a username"
-                  />
-                </div>
-                {errors.username && (
-                  <p className="text-sm text-red-500 animate-slide-up">{errors.username}</p>
-                )}
-              </div>
-
               {/* Email Field */}
               <div className="space-y-2">
                 <label 
@@ -247,7 +203,7 @@ const Register = () => {
                         ? `bg-gray-800/50 border-gray-600 text-white placeholder-gray-400 focus:ring-primary-500 focus:border-primary-500 ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`
                         : `bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-primary-500 focus:border-primary-500 ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`
                     }`}
-                    placeholder="Create a password"
+                    placeholder="Create a strong password (8+ chars, uppercase, lowercase, number, special char)"
                   />
                   <button
                     type="button"

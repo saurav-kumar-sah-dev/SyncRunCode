@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { 
   FiUser, 
@@ -16,12 +15,18 @@ import {
   FiAlignLeft,
   FiMinus,
   FiAlignJustify,
-  FiHash
+  FiHash,
+  FiCamera,
+  FiCalendar,
+  FiEdit3,
+  FiLock,
+  FiCheck,
+  FiX
 } from 'react-icons/fi';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 
 const Profile = () => {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, uploadProfileImage, updatePassword, changeUsername } = useAuth();
   const { 
     theme, 
     setTheme, 
@@ -40,32 +45,63 @@ const Profile = () => {
   } = useTheme();
   
   const [loading, setLoading] = useState(false);
+  const [usernameLoading, setUsernameLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
   const [formData, setFormData] = useState({
     username: '',
     email: '',
+    name: {
+      firstName: '',
+      lastName: ''
+    },
+    dateOfBirth: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
+  
   const [errors, setErrors] = useState({});
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (user) {
       setFormData(prev => ({
         ...prev,
         username: user.username || '',
-        email: user.email || ''
+        email: user.email || '',
+        name: {
+          firstName: user.name?.firstName || '',
+          lastName: user.name?.lastName || ''
+        },
+        dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : ''
       }));
     }
   }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setFormData(prev => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
     
     // Clear error when user starts typing
     if (errors[name]) {
@@ -76,67 +112,124 @@ const Profile = () => {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.username) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
-    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
-      newErrors.username = 'Username can only contain letters, numbers, and underscores';
-    }
-
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-
-    if (formData.newPassword) {
-      if (formData.newPassword.length < 6) {
-        newErrors.newPassword = 'Password must be at least 6 characters';
-      }
-      if (formData.newPassword !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match';
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validatePassword = (password) => {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
   };
 
-  const handleSubmit = async (e) => {
+  const handleUsernameChange = async () => {
+    if (!formData.username || formData.username === user.username) {
+      return;
+    }
+
+    if (formData.username.length < 3) {
+      setErrors({ username: 'Username must be at least 3 characters' });
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+      setErrors({ username: 'Username can only contain letters, numbers, and underscores' });
+      return;
+    }
+
+    setUsernameLoading(true);
+    const result = await changeUsername(formData.username);
+    setUsernameLoading(false);
+
+    if (!result.success) {
+      setErrors({ username: result.message });
+    } else {
+      setErrors({});
+    }
+  };
+
+  const handleProfileUpdate = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    const updateData = {
+      name: formData.name,
+      dateOfBirth: formData.dateOfBirth || null,
+      email: formData.email
+    };
 
     setLoading(true);
+    const result = await updateProfile(updateData);
+    setLoading(false);
+
+    if (!result.success) {
+      setErrors({ general: result.message });
+    } else {
+      setErrors({});
+    }
+  };
+
+  const handlePasswordUpdate = async (e) => {
+    e.preventDefault();
     
-    try {
-      const updateData = {
-        username: formData.username,
-        email: formData.email
-      };
+    if (!formData.currentPassword) {
+      setErrors({ currentPassword: 'Current password is required' });
+      return;
+    }
 
-      if (formData.newPassword) {
-        updateData.password = formData.newPassword;
-      }
+    if (!formData.newPassword) {
+      setErrors({ newPassword: 'New password is required' });
+      return;
+    }
 
-      const result = await updateProfile(updateData);
-      
-      if (result.success) {
-        setFormData(prev => ({
-          ...prev,
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        }));
-      }
-    } catch (error) {
-      console.error('Profile update error:', error);
-    } finally {
-      setLoading(false);
+    if (!validatePassword(formData.newPassword)) {
+      setErrors({ newPassword: 'Password must contain uppercase, lowercase, number, and special character' });
+      return;
+    }
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      setErrors({ confirmPassword: 'Passwords do not match' });
+      return;
+    }
+
+    setPasswordLoading(true);
+    const result = await updatePassword({
+      currentPassword: formData.currentPassword,
+      newPassword: formData.newPassword,
+      confirmPassword: formData.confirmPassword
+    });
+    setPasswordLoading(false);
+
+    if (result.success) {
+      setFormData(prev => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      }));
+      setErrors({});
+    } else {
+      setErrors({ passwordError: result.message });
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB');
+      return;
+    }
+
+    setImageLoading(true);
+    const result = await uploadProfileImage(file);
+    setImageLoading(false);
+
+    if (!result.success) {
+      setErrors({ imageError: result.message });
+    } else {
+      setErrors({});
     }
   };
 
@@ -174,7 +267,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 py-8">
-      <div className="container mx-auto px-4 max-w-4xl">
+      <div className="container mx-auto px-4 max-w-6xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Profile Settings</h1>
           <p className="text-gray-400">Manage your account settings and preferences</p>
@@ -182,34 +275,129 @@ const Profile = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Profile Information */}
-          <div className="lg:col-span-2">
-            <div className="bg-gray-900 rounded-lg p-6 mb-6">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Profile Image */}
+            <div className="bg-gray-900 rounded-lg p-6">
               <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-                <FiUser className="w-5 h-5 mr-2" />
-                Profile Information
+                <FiCamera className="w-5 h-5 mr-2" />
+                Profile Image
               </h2>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="flex items-center space-x-6">
+                <div className="relative">
+                  <img
+                    src={user.profileImage?.url || `https://ui-avatars.com/api/?name=${user.username}&background=3b82f6&color=fff&size=120`}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full object-cover border-2 border-gray-700"
+                  />
+                  {imageLoading && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                      <LoadingSpinner size="sm" />
+                    </div>
+                  )}
+                </div>
+                
+                <div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={imageLoading}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center space-x-2"
+                  >
+                    <FiCamera className="w-4 h-4" />
+                    <span>{imageLoading ? 'Uploading...' : 'Change Image'}</span>
+                  </button>
+                  <p className="text-sm text-gray-400 mt-2">
+                    JPG, PNG, GIF up to 5MB
+                  </p>
+                </div>
+              </div>
+              
+              {errors.imageError && (
+                <p className="mt-2 text-sm text-red-400">{errors.imageError}</p>
+              )}
+            </div>
+
+            {/* Basic Information */}
+            <div className="bg-gray-900 rounded-lg p-6">
+              <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
+                <FiUser className="w-5 h-5 mr-2" />
+                Basic Information
+              </h2>
+
+              <form onSubmit={handleProfileUpdate} className="space-y-6">
+                {/* Username */}
                 <div>
                   <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
                     Username
                   </label>
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    className={`w-full px-3 py-2 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.username ? 'border-red-500' : 'border-gray-600'
-                    }`}
-                    placeholder="Enter your username"
-                  />
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      className={`flex-1 px-3 py-2 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.username ? 'border-red-500' : 'border-gray-600'
+                      }`}
+                      placeholder="Enter your username"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleUsernameChange}
+                      disabled={usernameLoading || formData.username === user.username}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+                    >
+                      {usernameLoading ? <LoadingSpinner size="sm" /> : <FiSave className="w-4 h-4" />}
+                      <span>Save</span>
+                    </button>
+                  </div>
                   {errors.username && (
                     <p className="mt-1 text-sm text-red-400">{errors.username}</p>
                   )}
                 </div>
 
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="name.firstName" className="block text-sm font-medium text-gray-300 mb-2">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      id="name.firstName"
+                      name="name.firstName"
+                      value={formData.name.firstName}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter your first name"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="name.lastName" className="block text-sm font-medium text-gray-300 mb-2">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      id="name.lastName"
+                      name="name.lastName"
+                      value={formData.name.lastName}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter your last name"
+                    />
+                  </div>
+                </div>
+
+                {/* Email */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                     Email Address
@@ -230,13 +418,80 @@ const Profile = () => {
                   )}
                 </div>
 
+                {/* Date of Birth */}
                 <div>
-                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                    New Password (optional)
+                  <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-300 mb-2">
+                    Date of Birth
+                  </label>
+                  <input
+                    type="date"
+                    id="dateOfBirth"
+                    name="dateOfBirth"
+                    value={formData.dateOfBirth}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center space-x-2"
+                >
+                  {loading ? <LoadingSpinner size="sm" /> : <FiSave className="w-4 h-4" />}
+                  <span>Save Changes</span>
+                </button>
+              </form>
+            </div>
+
+            {/* Password Update */}
+            <div className="bg-gray-900 rounded-lg p-6">
+              <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
+                <FiLock className="w-5 h-5 mr-2" />
+                Change Password
+              </h2>
+
+              <form onSubmit={handlePasswordUpdate} className="space-y-6">
+                <div>
+                  <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                    Current Password
                   </label>
                   <div className="relative">
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type={showCurrentPassword ? 'text' : 'password'}
+                      id="currentPassword"
+                      name="currentPassword"
+                      value={formData.currentPassword}
+                      onChange={handleChange}
+                      className={`w-full px-3 py-2 pr-10 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.currentPassword ? 'border-red-500' : 'border-gray-600'
+                      }`}
+                      placeholder="Enter current password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    >
+                      {showCurrentPassword ? (
+                        <FiEyeOff className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <FiEye className="h-4 w-4 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.currentPassword && (
+                    <p className="mt-1 text-sm text-red-400">{errors.currentPassword}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                    New Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showNewPassword ? 'text' : 'password'}
                       id="newPassword"
                       name="newPassword"
                       value={formData.newPassword}
@@ -249,9 +504,9 @@ const Profile = () => {
                     <button
                       type="button"
                       className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => setShowNewPassword(!showNewPassword)}
                     >
-                      {showPassword ? (
+                      {showNewPassword ? (
                         <FiEyeOff className="h-4 w-4 text-gray-400" />
                       ) : (
                         <FiEye className="h-4 w-4 text-gray-400" />
@@ -263,35 +518,50 @@ const Profile = () => {
                   )}
                 </div>
 
-                {formData.newPassword && (
-                  <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                      Confirm New Password
-                    </label>
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                    Confirm New Password
+                  </label>
+                  <div className="relative">
                     <input
-                      type="password"
+                      type={showConfirmPassword ? 'text' : 'password'}
                       id="confirmPassword"
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className={`w-full px-3 py-2 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      className={`w-full px-3 py-2 pr-10 bg-gray-800 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         errors.confirmPassword ? 'border-red-500' : 'border-gray-600'
                       }`}
                       placeholder="Confirm new password"
                     />
-                    {errors.confirmPassword && (
-                      <p className="mt-1 text-sm text-red-400">{errors.confirmPassword}</p>
-                    )}
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? (
+                        <FiEyeOff className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <FiEye className="h-4 w-4 text-gray-400" />
+                      )}
+                    </button>
                   </div>
+                  {errors.confirmPassword && (
+                    <p className="mt-1 text-sm text-red-400">{errors.confirmPassword}</p>
+                  )}
+                </div>
+
+                {errors.passwordError && (
+                  <p className="text-sm text-red-400">{errors.passwordError}</p>
                 )}
 
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center justify-center space-x-2"
+                  disabled={passwordLoading}
+                  className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center justify-center space-x-2"
                 >
-                  {loading ? <LoadingSpinner size="sm" /> : <FiSave className="w-4 h-4" />}
-                  <span>Save Changes</span>
+                  {passwordLoading ? <LoadingSpinner size="sm" /> : <FiLock className="w-4 h-4" />}
+                  <span>Update Password</span>
                 </button>
               </form>
             </div>
