@@ -16,7 +16,7 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://saurav-syncruncode-backend.onrender.com/api",
-    "VITE_SOCKET_URL": "https://saurav-syncruncode-backend.onrender.com"
+    "VITE_API_URL": "https://syncruncode.onrender.com/api",
+    "VITE_SOCKET_URL": "https://syncruncode.onrender.com"
   }
 }
