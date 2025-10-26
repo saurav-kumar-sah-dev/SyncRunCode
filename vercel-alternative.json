@@ -1,29 +1,11 @@
 {
-  "version": 2,
-  "name": "syncruncode",
-  "builds": [
+  "rewrites": [
     {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist",
-        "buildCommand": "npm run build"
-      }
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/client/dist/$1"
-    }
-  ],
-  "env": {
-    "VITE_API_URL": "https://syncruncode.onrender.com",
-    "VITE_SOCKET_URL": "https://syncruncode.onrender.com"
-  },
-  "functions": {
-    "client/dist/**": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  "buildCommand": "cd client && npm run build",
+  "outputDirectory": "client/dist",
+  "installCommand": "cd client && npm install"
 }
