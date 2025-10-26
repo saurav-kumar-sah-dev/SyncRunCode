@@ -22,4 +22,9 @@ if (import.meta.env.DEV) {
   console.log('Final API Config:', config);
 }
 
+// Force production environment detection
+if (import.meta.env.PROD) {
+  console.log('Production mode - API URL:', config.API_URL);
+}
+
 export default config;
