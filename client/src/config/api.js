@@ -1,6 +1,9 @@
 // Get environment variables with explicit fallbacks
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://syncruncode.onrender.com';
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://syncruncode.onrender.com';
+// In development, use localhost; in production, use Render
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.DEV ? 'http://localhost:5000' : 'https://syncruncode.onrender.com');
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 
+  (import.meta.env.DEV ? 'http://localhost:5000' : 'https://syncruncode.onrender.com');
 
 const config = {
   API_URL: API_BASE_URL, // Don't add /api here, let axios calls handle it
