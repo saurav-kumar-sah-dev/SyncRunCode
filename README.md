@@ -9,6 +9,13 @@ SyncRunCode is a modern, full-featured real-time collaborative code compiler and
 - **Frontend**: [https://sync-run-code.vercel.app/](https://sync-run-code.vercel.app/)
 - **Backend API**: [https://syncruncode.onrender.com](https://syncruncode.onrender.com)
 
+### 🎯 **Quick Start (Live Demo)**
+1. **Visit**: [https://sync-run-code.vercel.app/](https://sync-run-code.vercel.app/)
+2. **Register** a new account or use existing credentials
+3. **Start coding** in any supported language
+4. **Create projects** and collaborate in real-time
+5. **Access admin dashboard** (if you have admin privileges)
+
 ## ✨ Features
 
 ### 🚀 Core Functionality
@@ -85,7 +92,14 @@ SyncRunCode is a modern, full-featured real-time collaborative code compiler and
 
 2. **Install dependencies**
    ```bash
-   npm run install-all
+   # Install root dependencies
+   npm install
+   
+   # Install client dependencies
+   cd client && npm install
+   
+   # Install server dependencies
+   cd ../server && npm install
    ```
 
 3. **Set up environment variables**
@@ -125,7 +139,15 @@ SyncRunCode is a modern, full-featured real-time collaborative code compiler and
 
 6. **Start the application**
    ```bash
+   # Start both frontend and backend
    npm run dev
+   
+   # Or start them separately:
+   # Terminal 1 - Backend
+   cd server && npm run dev
+   
+   # Terminal 2 - Frontend  
+   cd client && npm run dev
    ```
 
 7. **Access the application**
@@ -135,15 +157,25 @@ SyncRunCode is a modern, full-featured real-time collaborative code compiler and
 
 ## 🚀 Deployment
 
+### ✅ **Current Deployment Status**
+- **Backend**: ✅ Successfully deployed on Render
+- **Frontend**: ✅ Successfully deployed on Vercel  
+- **Database**: ✅ MongoDB Atlas connected
+- **Domain**: ✅ Custom domain configured
+- **SSL**: ✅ HTTPS enabled
+- **Status**: 🟢 **LIVE AND WORKING**
+
 ### Backend (Render)
 1. Push code to GitHub
 2. Connect repository to Render
 3. Deploy with the provided `render.yaml` configuration
+4. Set environment variables in Render dashboard
 
 ### Frontend (Vercel)
 1. Push code to GitHub
 2. Connect repository to Vercel
 3. Deploy with the provided `vercel.json` configuration
+4. Set environment variables in Vercel dashboard
 
 For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
@@ -290,8 +322,21 @@ MAX_FILE_SIZE=10485760
 
 ### Frontend (client/.env)
 ```env
+# API Configuration
 VITE_API_URL=http://localhost:5000
 VITE_SOCKET_URL=http://localhost:5000
+
+# Application Configuration
+VITE_APP_NAME=SyncRunCode
+VITE_APP_VERSION=1.0.0
+VITE_DEFAULT_THEME=dark
+VITE_ENABLE_DARK_MODE=true
+VITE_EDITOR_THEME=vs-dark
+VITE_EDITOR_FONT_SIZE=14
+VITE_EDITOR_TAB_SIZE=2
+VITE_ENABLE_ANALYTICS=false
+VITE_ENABLE_DEBUG=false
+VITE_ENABLE_HTTPS=false
 ```
 
 ## 🤝 Contributing
