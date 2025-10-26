@@ -7,7 +7,7 @@
     "start": "chmod +x start.sh && ./start.sh",
     "dev": "nodemon index.js",
     "create-superadmin": "node scripts/createSuperAdmin.js",
-    "build": "chmod +x install-compilers.sh && ./install-compilers.sh && npm install"
+    "build": "npm install"
   },
   "dependencies": {
     "express": "^4.18.2",

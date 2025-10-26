@@ -295,7 +295,7 @@ class CodeExecutor {
         return {
           success: false,
           output: '',
-          error: 'Java compiler (javac) not found and could not be installed. Please ensure Java Development Kit (JDK) is available.',
+          error: 'Java compilation is not available on this server. Java requires system-level installation which is restricted on this hosting platform. Please use JavaScript, Python, TypeScript, C, or C++ instead.',
           executionTime: 0,
           memoryUsage: 0,
           status: 'compiler_not_found'
