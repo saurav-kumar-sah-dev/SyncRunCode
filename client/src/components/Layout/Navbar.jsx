@@ -77,28 +77,35 @@ const Navbar = () => {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
-            {/* Theme toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-colors focus-ring"
-              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-            >
-              {theme === 'dark' ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
-            </button>
-
             {isAuthenticated ? (
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="flex items-center space-x-2 p-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-colors focus-ring"
                 >
-                  <FiUser className="w-5 h-5" />
-                  <span className="hidden md:block">{user?.username}</span>
+                  {user?.profileImage?.url ? (
+                    <img 
+                      src={user.profileImage.url} 
+                      alt="Profile" 
+                      className="w-6 h-6 rounded-full object-cover border border-gray-600"
+                    />
+                  ) : (
+                    <FiUser className="w-5 h-5" />
+                  )}
+                  <span className="hidden md:block">
+                    {user?.name?.firstName && user?.name?.lastName 
+                      ? `${user.name.firstName} ${user.name.lastName}`.trim()
+                      : user?.name?.firstName 
+                        ? user.name.firstName
+                        : user?.username
+                    }
+                  </span>
                 </button>
 
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg border border-gray-700 animate-slide-up">
                     <div className="py-2">
+                      
                       <Link
                         to="/profile"
                         className="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
