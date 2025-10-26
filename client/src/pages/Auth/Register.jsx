@@ -6,6 +6,7 @@ import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiArrowLeft, FiCode } from 're
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
 const Register = () => {
+  // Registration form with email and password fields
   const [formData, setFormData] = useState({
     email: '',
     password: '',
