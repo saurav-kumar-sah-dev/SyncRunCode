@@ -660,12 +660,11 @@ class CodeExecutor {
     await fs.writeFile(filePath, code);
     
     return new Promise((resolve) => {
-      // Compile TypeScript to JavaScript using local typescript installation
-      const compileProcess = spawn('npx', ['tsc', filePath, '--outDir', tempDir, '--target', 'ES2020', '--module', 'commonjs', '--skipLibCheck'], {
+      // Compile TypeScript to JavaScript using globally installed typescript
+      const compileProcess = spawn('tsc', [filePath, '--outDir', tempDir, '--target', 'ES2020', '--module', 'commonjs', '--skipLibCheck', '--noEmitOnError'], {
         cwd: tempDir,
         stdio: ['pipe', 'pipe', 'pipe'],
-        shell: true,
-        env: { ...process.env, PATH: `${process.env.PATH}:${process.cwd()}/node_modules/.bin` }
+        shell: true
       });
 
       let compileError = '';
