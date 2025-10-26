@@ -240,20 +240,67 @@ class CodeExecutor {
     });
   }
 
+  async installCompiler(compiler) {
+    const { spawn } = require('child_process');
+    
+    return new Promise((resolve) => {
+      let installCommand, installArgs;
+      
+      if (compiler === 'javac') {
+        installCommand = 'apt-get';
+        installArgs = ['update'];
+      } else if (compiler === 'tsc') {
+        installCommand = 'npm';
+        installArgs = ['install', '-g', 'typescript'];
+      } else {
+        resolve(false);
+        return;
+      }
+      
+      const installProcess = spawn(installCommand, installArgs, {
+        stdio: ['pipe', 'pipe', 'pipe']
+      });
+      
+      installProcess.on('close', (code) => {
+        if (code === 0 && compiler === 'javac') {
+          // For Java, run the actual installation
+          const javaInstallProcess = spawn('apt-get', ['install', '-y', 'openjdk-11-jdk'], {
+            stdio: ['pipe', 'pipe', 'pipe']
+          });
+          
+          javaInstallProcess.on('close', (javaCode) => {
+            resolve(javaCode === 0);
+          });
+        } else {
+          resolve(code === 0);
+        }
+      });
+      
+      installProcess.on('error', () => {
+        resolve(false);
+      });
+    });
+  }
+
   async executeJava(code, input, tempDir) {
     const startTime = Date.now();
     
     // Check if Java compiler is available
     const hasCompiler = await this.checkCompiler('javac');
     if (!hasCompiler) {
-      return {
-        success: false,
-        output: '',
-        error: 'Java compiler (javac) not found. Please install Java Development Kit (JDK) to compile Java code.',
-        executionTime: 0,
-        memoryUsage: 0,
-        status: 'compiler_not_found'
-      };
+      // Try to install Java compiler
+      console.log('Java compiler not found, attempting to install...');
+      const installSuccess = await this.installCompiler('javac');
+      if (!installSuccess) {
+        return {
+          success: false,
+          output: '',
+          error: 'Java compiler (javac) not found and could not be installed. Please ensure Java Development Kit (JDK) is available.',
+          executionTime: 0,
+          memoryUsage: 0,
+          status: 'compiler_not_found'
+        };
+      }
     }
     
     // Extract class name from code
@@ -591,6 +638,24 @@ class CodeExecutor {
     const startTime = Date.now();
     const filePath = path.join(tempDir, 'main.ts');
     const jsFilePath = path.join(tempDir, 'main.js');
+    
+    // Check if TypeScript compiler is available
+    const hasCompiler = await this.checkCompiler('tsc');
+    if (!hasCompiler) {
+      // Try to install TypeScript compiler
+      console.log('TypeScript compiler not found, attempting to install...');
+      const installSuccess = await this.installCompiler('tsc');
+      if (!installSuccess) {
+        return {
+          success: false,
+          output: '',
+          error: 'TypeScript compiler (tsc) not found and could not be installed. Please ensure TypeScript is available.',
+          executionTime: 0,
+          memoryUsage: 0,
+          status: 'compiler_not_found'
+        };
+      }
+    }
     
     await fs.writeFile(filePath, code);
     
