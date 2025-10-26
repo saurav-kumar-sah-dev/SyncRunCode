@@ -104,7 +104,7 @@ const About = () => {
                 { icon: FiUsers, label: 'Real-time', color: 'text-green-400', bgColor: 'bg-green-500/10', borderColor: 'border-green-500/20' },
                 { icon: FiShield, label: 'Secure', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/20' }
               ].map((stat, index) => (
-                <div key={index} className={`${bgColor} backdrop-blur-sm border ${borderColor} rounded-2xl p-4 sm:p-5 hover:scale-110 transition-all duration-500 hover:shadow-xl ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{transitionDelay: `${index * 150}ms`}}>
+                <div key={index} className={`${stat.bgColor} backdrop-blur-sm border ${stat.borderColor} rounded-2xl p-4 sm:p-5 hover:scale-110 transition-all duration-500 hover:shadow-xl ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{transitionDelay: `${index * 150}ms`}}>
                   <stat.icon className={`w-6 h-6 sm:w-7 sm:h-7 mx-auto mb-3 ${stat.color}`} />
                   <p className="text-sm sm:text-base text-gray-300 font-semibold text-center">{stat.label}</p>
                 </div>
