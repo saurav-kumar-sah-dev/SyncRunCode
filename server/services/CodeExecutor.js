@@ -639,33 +639,29 @@ class CodeExecutor {
     const filePath = path.join(tempDir, 'main.ts');
     const jsFilePath = path.join(tempDir, 'main.js');
     
-    // Check if TypeScript compiler is available
-    const hasCompiler = await this.checkCompiler('tsc');
-    if (!hasCompiler) {
-      // Try to install TypeScript compiler
-      console.log('TypeScript compiler not found, attempting to install...');
-      const installSuccess = await this.installCompiler('tsc');
-      if (!installSuccess) {
-        return {
-          success: false,
-          output: '',
-          error: 'TypeScript compiler (tsc) not found and could not be installed. Please ensure TypeScript is available.',
-          executionTime: 0,
-          memoryUsage: 0,
-          status: 'compiler_not_found'
-        };
-      }
-    }
-    
     await fs.writeFile(filePath, code);
     
     return new Promise((resolve) => {
-      // Compile TypeScript to JavaScript using globally installed typescript
-      const compileProcess = spawn('tsc', [filePath, '--outDir', tempDir, '--target', 'ES2020', '--module', 'commonjs', '--skipLibCheck', '--noEmitOnError'], {
-        cwd: tempDir,
-        stdio: ['pipe', 'pipe', 'pipe'],
-        shell: true
-      });
+      // Try multiple approaches to run TypeScript compiler
+      const serverDir = path.join(__dirname, '..');
+      const tscPath = path.join(serverDir, 'node_modules', '.bin', 'tsc');
+      
+      // First try: Use the local tsc binary directly
+      let compileProcess;
+      try {
+        compileProcess = spawn(tscPath, [filePath, '--outDir', tempDir, '--target', 'ES2020', '--module', 'commonjs', '--skipLibCheck', '--noEmitOnError'], {
+          cwd: tempDir,
+          stdio: ['pipe', 'pipe', 'pipe'],
+          shell: true
+        });
+      } catch (error) {
+        // Fallback: Use npx
+        compileProcess = spawn('npx', ['tsc', filePath, '--outDir', tempDir, '--target', 'ES2020', '--module', 'commonjs', '--skipLibCheck', '--noEmitOnError'], {
+          cwd: tempDir,
+          stdio: ['pipe', 'pipe', 'pipe'],
+          shell: true
+        });
+      }
 
       let compileError = '';
 

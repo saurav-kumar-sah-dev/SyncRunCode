@@ -40,6 +40,9 @@ const Compiler = () => {
   const [executionTime, setExecutionTime] = useState(0);
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveTitle, setSaveTitle] = useState('');
+  const [saveDescription, setSaveDescription] = useState('');
   const [showProjectSettings, setShowProjectSettings] = useState(false);
   const [projectTitle, setProjectTitle] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
@@ -91,7 +94,14 @@ console.log("Hello, World!");`
     } else {
       setCode(defaultCode[language]);
     }
-  }, [projectId, isAuthenticated, language]);
+  }, [projectId, isAuthenticated]);
+
+  // Handle language change for new projects
+  useEffect(() => {
+    if (!projectId) {
+      setCode(defaultCode[language]);
+    }
+  }, [language]);
 
   // Set up real-time collaboration
   useEffect(() => {
@@ -184,6 +194,9 @@ console.log("Hello, World!");`
     setLanguage(newLanguage);
     if (!projectId) {
       setCode(defaultCode[newLanguage]);
+    } else {
+      // For existing projects, update the project's language
+      setProject(prev => prev ? { ...prev, language: newLanguage } : null);
     }
   };
 
@@ -232,7 +245,7 @@ console.log("Hello, World!");`
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!isAuthenticated) {
       toast.error('Please login to save your code');
       return;
@@ -243,47 +256,45 @@ console.log("Hello, World!");`
       return;
     }
 
+    if (projectId) {
+      // Update existing project
+      handleUpdateProject();
+    } else {
+      // Show save modal for new project
+      setSaveTitle(`My ${language.charAt(0).toUpperCase() + language.slice(1)} Project`);
+      setSaveDescription('');
+      setShowSaveModal(true);
+    }
+  };
+
+  const handleSaveProject = async () => {
+    if (!saveTitle.trim()) {
+      toast.error('Project title is required');
+      return;
+    }
+
     setIsSaving(true);
 
     try {
-      if (projectId) {
-        // Update existing project
-        await axios.put(`/api/projects/${projectId}`, {
-          files: [{
-            name: `main.${languages.find(l => l.value === language)?.extension}`,
-            content: code,
-            language,
-            isMain: true
-          }]
-        });
-        toast.success('Project saved successfully!');
-      } else {
-        // Create new project - prompt for title
-        const title = prompt('Enter project title:', `My ${language.charAt(0).toUpperCase() + language.slice(1)} Project`);
-        if (!title) {
-          setIsSaving(false);
-          return;
-        }
-
-        const response = await axios.post('/api/projects', {
-          title: title.trim(),
-          description: '',
+      const response = await axios.post('/api/projects', {
+        title: saveTitle.trim(),
+        description: saveDescription.trim(),
+        language,
+        files: [{
+          name: `main.${languages.find(l => l.value === language)?.extension}`,
+          content: code,
           language,
-          files: [{
-            name: `main.${languages.find(l => l.value === language)?.extension}`,
-            content: code,
-            language,
-            isMain: true
-          }]
-        });
-        
-        const newProject = response.data.data.project;
-        setProject(newProject);
-        setProjectTitle(newProject.title);
-        setProjectDescription(newProject.description || '');
-        window.history.replaceState(null, '', `/compiler/${newProject._id}`);
-        toast.success('Project created and saved!');
-      }
+          isMain: true
+        }]
+      });
+      
+      const newProject = response.data.data.project;
+      setProject(newProject);
+      setProjectTitle(newProject.title);
+      setProjectDescription(newProject.description || '');
+      window.history.replaceState(null, '', `/compiler/${newProject._id}`);
+      setShowSaveModal(false);
+      toast.success('Project created and saved!');
     } catch (error) {
       toast.error('Failed to save project');
     } finally {
@@ -435,6 +446,20 @@ console.log("Hello, World!");`
           >
             {isSaving ? <LoadingSpinner size="sm" /> : <FiSave className="w-4 h-4" />}
           </button>
+
+          {projectId && (
+            <button
+              onClick={() => {
+                setSaveTitle(`${projectTitle} (Copy)`);
+                setSaveDescription(projectDescription || '');
+                setShowSaveModal(true);
+              }}
+              className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+              title="Save As New Project"
+            >
+              <FiCopy className="w-4 h-4" />
+            </button>
+          )}
 
           <button
             onClick={handleDownload}
@@ -667,6 +692,75 @@ console.log("Hello, World!");`
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isUpdatingProject ? <LoadingSpinner size="sm" /> : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Project Modal */}
+      {showSaveModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 rounded-lg border border-gray-800 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between p-6 border-b border-gray-800">
+              <h2 className="text-xl font-semibold text-white">Save Project</h2>
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="p-1 text-gray-400 hover:text-white transition-colors"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Project Title
+                </label>
+                <input
+                  type="text"
+                  value={saveTitle}
+                  onChange={(e) => setSaveTitle(e.target.value)}
+                  placeholder="Enter project title..."
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  maxLength={100}
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  {saveTitle.length}/100 characters
+                </p>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={saveDescription}
+                  onChange={(e) => setSaveDescription(e.target.value)}
+                  placeholder="Enter project description..."
+                  rows={3}
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  maxLength={500}
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  {saveDescription.length}/500 characters
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-3 p-6 border-t border-gray-800">
+              <button
+                onClick={() => setShowSaveModal(false)}
+                className="px-4 py-2 text-gray-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveProject}
+                disabled={isSaving || !saveTitle.trim()}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isSaving ? <LoadingSpinner size="sm" /> : 'Save Project'}
               </button>
             </div>
           </div>
